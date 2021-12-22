@@ -26,6 +26,6 @@ public class RandomGeneratorServiceTest {
                 .boxed()
                 .collect(Collectors.toList());
 
-        assertThat(randomFactors).containsOnlyElementsOf(IntStream.range(11, 100).boxed().collect(Collectors.toList()));
+        assertThat(randomFactors).isSubsetOf(IntStream.range(11, 100).boxed().collect(Collectors.toList()));
     }
 }
