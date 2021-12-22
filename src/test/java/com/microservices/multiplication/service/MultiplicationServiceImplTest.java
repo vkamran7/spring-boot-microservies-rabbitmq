@@ -3,12 +3,14 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MultiplicationServiceImplTest {
 
     private MultiplicationServiceImpl multiplicationService;
@@ -18,7 +20,6 @@ public class MultiplicationServiceImplTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         multiplicationService = new MultiplicationServiceImpl(randomGeneratorService);
     }
 
