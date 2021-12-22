@@ -1,14 +1,21 @@
 package com.microservices.multiplication.service;
 
 import com.microservices.multiplication.domain.Multiplication;
+import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 
 public interface MultiplicationService {
+
     /**
-     * Created a multiplication object with two
-     * randomly generated factors
-     * between 11 and 99
-     *
-     * @return a Multiplication object with random factors
+     * Generates a random {@link Multiplication} object
+     * @return a multiplication of randomly generated numbers
      */
     Multiplication createRandomMultiplication();
+
+    /**
+     *
+     * @param multiplicationResultAttempt
+     * @return true if the attempt matches the result of the multiplication,
+     * otherwise false
+     */
+    boolean checkAttempt(final MultiplicationResultAttempt multiplicationResultAttempt);
 }

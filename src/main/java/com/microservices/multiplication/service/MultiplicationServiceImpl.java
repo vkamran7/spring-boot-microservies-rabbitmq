@@ -1,6 +1,7 @@
 package com.microservices.multiplication.service;
 
 import com.microservices.multiplication.domain.Multiplication;
+import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,5 +18,10 @@ public class MultiplicationServiceImpl implements MultiplicationService{
         int factorB = randomGeneratorService.generatedRandomFactor();
 
         return new Multiplication(factorA, factorB);
+    }
+
+    @Override
+    public boolean checkAttempt(final MultiplicationResultAttempt multiplicationResultAttempt) {
+        return false;
     }
 }
