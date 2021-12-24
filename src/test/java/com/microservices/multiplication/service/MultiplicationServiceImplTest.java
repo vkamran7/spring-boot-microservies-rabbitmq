@@ -1,6 +1,8 @@
 package com.microservices.multiplication.service;
 
 import com.microservices.multiplication.domain.Multiplication;
+import com.microservices.multiplication.domain.MultiplicationResultAttempt;
+import com.microservices.multiplication.domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +33,32 @@ public class MultiplicationServiceImplTest {
 
         assertThat(multiplication.getFactorA()).isEqualTo(50);
         assertThat(multiplication.getFactorB()).isEqualTo(30);
-        assertThat(multiplication.getResult()).isEqualTo(1500);
+//        assertThat(multiplication.getResult()).isEqualTo(1500);
+    }
+
+    @Test
+    public void checkCorrectAttemptTest() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("kamran");
+        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt(user, multiplication, 3000);
+
+        // when
+        boolean attemptResult = multiplicationService.checkAttempt(attempt);
+
+        // assert
+        assertThat(attemptResult).isTrue();
+    }
+
+    @Test
+    public void checkWrongAttemptTest() {
+        // given
+        Multiplication multiplication = new Multiplication(50, 60);
+        User user = new User("kamran");
+        MultiplicationResultAttempt attempt = new MultiplicationResultAttempt(user, multiplication, 3010);
+
+        // when
+        boolean attemptResult = multiplicationService.checkAttempt(attempt);
+        assertThat(attemptResult).isFalse();
     }
 }
