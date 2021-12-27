@@ -3,6 +3,7 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
 public class MultiplicationServiceImpl implements MultiplicationService{
@@ -21,8 +22,16 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     }
 
     @Override
-    public boolean checkAttempt(final MultiplicationResultAttempt resultAttempt) {
-        return resultAttempt.getResultAttempt() ==
-                resultAttempt.getMultiplication().getFactorA() * resultAttempt.getMultiplication().getFactorB();
+    public boolean checkAttempt(final MultiplicationResultAttempt attempt) {
+        boolean correct = attempt.getResultAttempt() ==
+                attempt.getMultiplication().getFactorA() * attempt.getMultiplication().getFactorB();
+
+        Assert.isTrue(!attempt.isCorrect(), "You can't send an attempt marked as correct");
+        MultiplicationResultAttempt checkedAttempt =
+                new MultiplicationResultAttempt(attempt.getUser(),
+                        attempt.getMultiplication(),
+                        attempt.getResultAttempt(),
+                        correct);
+        return correct;
     }
 }
