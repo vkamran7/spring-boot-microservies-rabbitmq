@@ -2,9 +2,6 @@ package com.microservices.multiplication.controller;
 
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.service.MultiplicationService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,14 +19,15 @@ public final class MultiplicationResultAttemptController {
     }
 
     @PostMapping
-    ResponseEntity<ResultResponse> postResult(@RequestBody MultiplicationResultAttempt attempt) {
-        return ResponseEntity.ok(new ResultResponse(multiplicationService.checkAttempt(attempt)));
-    }
+    ResponseEntity<MultiplicationResultAttempt> postResult(@RequestBody MultiplicationResultAttempt attempt) {
+        boolean isCorrect = multiplicationService.checkAttempt(attempt);
+        MultiplicationResultAttempt attemptCopy = new MultiplicationResultAttempt(
+                attempt.getUser(),
+                attempt.getMultiplication(),
+                attempt.getResultAttempt(),
+                isCorrect
+        );
 
-    @RequiredArgsConstructor
-    @NoArgsConstructor(force = true)
-    @Getter
-    static final class ResultResponse {
-        private final boolean correct;
+        return ResponseEntity.ok(attemptCopy);
     }
 }
