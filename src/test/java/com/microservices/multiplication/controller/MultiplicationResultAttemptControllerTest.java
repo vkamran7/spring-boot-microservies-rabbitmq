@@ -18,7 +18,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.microservices.multiplication.controller.MultiplicationResultAttemptController.ResultResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +34,6 @@ public class MultiplicationResultAttemptControllerTest {
     private MockMvc mockMvc;
 
     private JacksonTester<MultiplicationResultAttempt> jsonResult;
-    private JacksonTester<ResultResponse> jsonResponse;
 
     @Before
     public void setup() {
@@ -64,6 +62,13 @@ public class MultiplicationResultAttemptControllerTest {
                 .andReturn().getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(jsonResponse.write(new ResultResponse(correct)).getJson());
+        assertThat(response.getContentAsString())
+                .isEqualTo(jsonResult.write(
+                        new MultiplicationResultAttempt(
+                                attempt.getUser(),
+                                attempt.getMultiplication(),
+                                attempt.getResultAttempt(),
+                                correct))
+                        .getJson());
     }
 }
