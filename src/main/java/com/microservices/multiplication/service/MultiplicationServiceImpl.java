@@ -8,6 +8,7 @@ import com.microservices.multiplication.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,7 @@ public class MultiplicationServiceImpl implements MultiplicationService{
         return new Multiplication(factorA, factorB);
     }
 
+    @Transactional
     @Override
     public boolean checkAttempt(final MultiplicationResultAttempt attempt) {
         // check if user already exists
