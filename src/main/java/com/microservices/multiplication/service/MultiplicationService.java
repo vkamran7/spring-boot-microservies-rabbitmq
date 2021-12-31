@@ -3,6 +3,8 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 
+import java.util.List;
+
 public interface MultiplicationService {
 
     /**
@@ -18,4 +20,6 @@ public interface MultiplicationService {
      * otherwise false
      */
     boolean checkAttempt(final MultiplicationResultAttempt multiplicationResultAttempt);
+
+    List<MultiplicationResultAttempt> getStatsForUser(String userAlias);
 }
