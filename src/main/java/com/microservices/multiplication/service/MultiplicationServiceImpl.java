@@ -2,16 +2,27 @@ package com.microservices.multiplication.service;
 
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
+import com.microservices.multiplication.domain.User;
+import com.microservices.multiplication.repository.MultiplicationResultAttemptRepository;
+import com.microservices.multiplication.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.Optional;
 
 @Service
 public class MultiplicationServiceImpl implements MultiplicationService{
 
     private RandomGeneratorService randomGeneratorService;
+    private MultiplicationResultAttemptRepository attemptRepository;
+    private UserRepository userRepository;
 
-    public MultiplicationServiceImpl(RandomGeneratorService randomGeneratorService) {
+    public MultiplicationServiceImpl(final RandomGeneratorService randomGeneratorService,
+                                     final MultiplicationResultAttemptRepository attemptRepository,
+                                     final UserRepository userRepository) {
         this.randomGeneratorService = randomGeneratorService;
+        this.attemptRepository = attemptRepository;
+        this.userRepository = userRepository;
     }
     @Override
     public Multiplication createRandomMultiplication() {
@@ -23,15 +34,23 @@ public class MultiplicationServiceImpl implements MultiplicationService{
 
     @Override
     public boolean checkAttempt(final MultiplicationResultAttempt attempt) {
-        boolean correct = attempt.getResultAttempt() ==
-                attempt.getMultiplication().getFactorA() * attempt.getMultiplication().getFactorB();
+        // check if user already exists
+        Optional<User> user = userRepository.findByAlias(attempt.getUser().getAlias());
 
         Assert.isTrue(!attempt.isCorrect(), "You can't send an attempt marked as correct");
-        MultiplicationResultAttempt checkedAttempt =
-                new MultiplicationResultAttempt(attempt.getUser(),
-                        attempt.getMultiplication(),
-                        attempt.getResultAttempt(),
-                        correct);
-        return correct;
+
+        boolean isCorrect = attempt.getResultAttempt() ==
+                attempt.getMultiplication().getFactorA() * attempt.getMultiplication().getFactorB();
+
+        MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(
+                user.orElse(attempt.getUser()),
+                attempt.getMultiplication(),
+                attempt.getResultAttempt(),
+                isCorrect
+        );
+
+        // store the attempt
+        attemptRepository.save(checkedAttempt);
+        return isCorrect;
     }
 }
