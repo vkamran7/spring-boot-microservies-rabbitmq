@@ -3,6 +3,7 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.domain.User;
+import com.microservices.multiplication.repository.MultiplicationRepository;
 import com.microservices.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.microservices.multiplication.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,16 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     private RandomGeneratorService randomGeneratorService;
     private MultiplicationResultAttemptRepository attemptRepository;
     private UserRepository userRepository;
+    private MultiplicationRepository multiplicationRepository;
 
     public MultiplicationServiceImpl(final RandomGeneratorService randomGeneratorService,
                                      final MultiplicationResultAttemptRepository attemptRepository,
-                                     final UserRepository userRepository) {
+                                     final UserRepository userRepository,
+                                     final MultiplicationRepository multiplicationRepository) {
         this.randomGeneratorService = randomGeneratorService;
         this.attemptRepository = attemptRepository;
         this.userRepository = userRepository;
+        this.multiplicationRepository = multiplicationRepository;
     }
     @Override
     public Multiplication createRandomMultiplication() {
@@ -40,6 +44,8 @@ public class MultiplicationServiceImpl implements MultiplicationService{
         // check if user already exists
         Optional<User> user = userRepository.findByAlias(attempt.getUser().getAlias());
 
+        Optional<Multiplication> multiplication = multiplicationRepository.findByFactorAAndFactorB(attempt.getMultiplication().getFactorA(), attempt.getMultiplication().getFactorB());
+
         Assert.isTrue(!attempt.isCorrect(), "You can't send an attempt marked as correct");
 
         boolean isCorrect = attempt.getResultAttempt() ==
@@ -47,7 +53,7 @@ public class MultiplicationServiceImpl implements MultiplicationService{
 
         MultiplicationResultAttempt checkedAttempt = new MultiplicationResultAttempt(
                 user.orElse(attempt.getUser()),
-                attempt.getMultiplication(),
+                multiplication.orElse(attempt.getMultiplication()),
                 attempt.getResultAttempt(),
                 isCorrect
         );

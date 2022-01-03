@@ -3,6 +3,7 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.domain.User;
+import com.microservices.multiplication.repository.MultiplicationRepository;
 import com.microservices.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.microservices.multiplication.repository.UserRepository;
 import org.junit.Before;
@@ -31,9 +32,12 @@ public class MultiplicationServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private MultiplicationRepository multiplicationRepository;
+
     @Before
     public void setup() {
-        multiplicationService = new MultiplicationServiceImpl(randomGeneratorService, attemptRepository, userRepository);
+        multiplicationService = new MultiplicationServiceImpl(randomGeneratorService, attemptRepository, userRepository, multiplicationRepository);
     }
 
     @Test
