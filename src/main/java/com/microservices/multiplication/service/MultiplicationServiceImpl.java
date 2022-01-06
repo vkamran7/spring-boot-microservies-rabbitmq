@@ -3,6 +3,8 @@ package com.microservices.multiplication.service;
 import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.domain.User;
+import com.microservices.multiplication.event.EventDispatcher;
+import com.microservices.multiplication.event.MultiplicationSolvedEvent;
 import com.microservices.multiplication.repository.MultiplicationRepository;
 import com.microservices.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.microservices.multiplication.repository.UserRepository;
@@ -20,16 +22,20 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     private MultiplicationResultAttemptRepository attemptRepository;
     private UserRepository userRepository;
     private MultiplicationRepository multiplicationRepository;
+    private EventDispatcher eventDispatcher;
 
     public MultiplicationServiceImpl(final RandomGeneratorService randomGeneratorService,
                                      final MultiplicationResultAttemptRepository attemptRepository,
                                      final UserRepository userRepository,
-                                     final MultiplicationRepository multiplicationRepository) {
+                                     final MultiplicationRepository multiplicationRepository,
+                                     final EventDispatcher eventDispatcher) {
         this.randomGeneratorService = randomGeneratorService;
         this.attemptRepository = attemptRepository;
         this.userRepository = userRepository;
         this.multiplicationRepository = multiplicationRepository;
+        this.eventDispatcher = eventDispatcher;
     }
+
     @Override
     public Multiplication createRandomMultiplication() {
         int factorA = randomGeneratorService.generatedRandomFactor();
@@ -60,6 +66,12 @@ public class MultiplicationServiceImpl implements MultiplicationService{
 
         // store the attempt
         attemptRepository.save(checkedAttempt);
+
+        eventDispatcher.send(
+                new MultiplicationSolvedEvent(checkedAttempt.getId(),
+                        checkedAttempt.getUser().getId(),
+                        checkedAttempt.isCorrect()));
+
         return isCorrect;
     }
 
@@ -67,4 +79,6 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     public List<MultiplicationResultAttempt> getStatsForUser(String userAlias) {
         return attemptRepository.findTop5ByUserAliasOrderByIdDesc(userAlias);
     }
+
+
 }
