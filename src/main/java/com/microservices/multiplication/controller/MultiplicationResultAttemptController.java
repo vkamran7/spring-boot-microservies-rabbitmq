@@ -2,6 +2,7 @@ package com.microservices.multiplication.controller;
 
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.service.MultiplicationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,4 +35,10 @@ public final class MultiplicationResultAttemptController {
     ResponseEntity<List<MultiplicationResultAttempt>> getStatistics(@RequestParam("alias") String alias) {
         return ResponseEntity.ok(multiplicationService.getStatsForUser(alias));
     }
+
+    @GetMapping("/{id}")
+    ResponseEntity<?> getAttemptById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(multiplicationService.getById(id), HttpStatus.OK);
+    }
+
 }

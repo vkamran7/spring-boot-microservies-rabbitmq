@@ -4,6 +4,7 @@ import com.microservices.multiplication.domain.Multiplication;
 import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MultiplicationService {
 
@@ -22,4 +23,6 @@ public interface MultiplicationService {
     boolean checkAttempt(final MultiplicationResultAttempt multiplicationResultAttempt);
 
     List<MultiplicationResultAttempt> getStatsForUser(String userAlias);
+
+    MultiplicationResultAttempt getById(Long id);
 }

@@ -5,6 +5,7 @@ import com.microservices.multiplication.domain.MultiplicationResultAttempt;
 import com.microservices.multiplication.domain.User;
 import com.microservices.multiplication.event.EventDispatcher;
 import com.microservices.multiplication.event.MultiplicationSolvedEvent;
+import com.microservices.multiplication.exception.AttemptNotFoundException;
 import com.microservices.multiplication.repository.MultiplicationRepository;
 import com.microservices.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.microservices.multiplication.repository.UserRepository;
@@ -81,4 +82,12 @@ public class MultiplicationServiceImpl implements MultiplicationService{
     }
 
 
+    @Override
+    public MultiplicationResultAttempt getById(Long id) {
+        Optional<MultiplicationResultAttempt> attempt = attemptRepository.findById(id);
+        if (!attempt.isPresent()) {
+            throw new AttemptNotFoundException("Not Found");
+        }
+        return attempt.get();
+    }
 }
